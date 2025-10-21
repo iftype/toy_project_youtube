@@ -11,7 +11,7 @@
   [headers.values]
     # Access-Control-Allow-Origin: 요청을 허용할 클라이언트 도메인 지정
     # ❌ 와일드카드 "*" 대신, 실제 도메인을 입력해야 합니다.
-    Access-Control-Allow-Origin = "https://iftype.github.io" 
+    Access-Control-Allow-Origin = "https://iftype.github.io/toy_project_client/" 
     
     # 허용할 HTTP 메서드 (GET 요청과 사전 점검 OPTIONS 허용)
     Access-Control-Allow-Methods = "GET, POST, OPTIONS" 
