@@ -27,8 +27,17 @@ exports.handler = async (event) => {
   } catch (error) {
     console.error("YouTube API 호출 오류:", error);
     return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "데이터를 가져오는 데 실패했습니다." }),
+      statusCode: 200,
+      headers: {
+        // ✅ 클라이언트의 정확한 Origin (경로 제외)
+        "Access-Control-Allow-Origin": "https://iftype.github.io",
+
+        // 프리플라이트(Preflight) OPTIONS 요청을 허용하기 위해 필수
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
+      body: JSON.stringify(apiData),
     };
   }
 };
