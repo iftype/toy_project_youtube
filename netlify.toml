@@ -1,1 +1,10 @@
-functions = "netlify/functions"
+# netlify.toml
+
+[build]
+  # 이 경로는 클라이언트(GitHub Pages)의 빌드 결과물이 저장되는 경로입니다.
+  # 만약 클라이언트 코드가 /dist 폴더에 있다면 "dist"로 변경하세요.
+  publish = "public" 
+
+[functions]
+  # Netlify Function 파일들이 위치한 폴더 경로입니다.
+  directory = "netlify/functions"
