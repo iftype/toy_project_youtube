@@ -1,10 +1,14 @@
 # netlify.toml
 
 [build]
-  # 이 경로는 클라이언트(GitHub Pages)의 빌드 결과물이 저장되는 경로입니다.
-  # 만약 클라이언트 코드가 /dist 폴더에 있다면 "dist"로 변경하세요.
-  publish = "public" 
+  # 빌드 명령어: Function 의존성 설치를 위해 명시적으로 npm install 실행
+  command = "npm install" 
+  
+  # 퍼블리시 경로 (Static files):
+  # 클라이언트가 이 레포에 없으므로, 더미 폴더를 지정하여 
+  # Netlify가 정적 파일 빌드를 건너뛰도록 유도합니다.
+  publish = "no_public_files" # 존재하지 않는 폴더명 입력
 
 [functions]
-  # Netlify Function 파일들이 위치한 폴더 경로입니다.
+  # Function 파일들이 위치한 정확한 경로
   directory = "netlify/functions"
