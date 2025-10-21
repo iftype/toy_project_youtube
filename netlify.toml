@@ -1,6 +1,20 @@
 # netlify.toml
 
 [functions]
-  # Netlify Function 파일들이 위치한 정확한 경로만 남깁니다.
-  # command와 publish 항목을 삭제하여 Netlify가 기본값으로 처리하도록 유도합니다.
   directory = "netlify/functions"
+  
+# 💡 이 섹션을 추가 또는 수정해야 합니다. 💡
+[[headers]]
+  # 모든 Netlify Function 경로에 적용
+  for = "/.netlify/functions/*" 
+  
+  [headers.values]
+    # Access-Control-Allow-Origin: 요청을 허용할 클라이언트 도메인 지정
+    # ❌ 와일드카드 "*" 대신, 실제 도메인을 입력해야 합니다.
+    Access-Control-Allow-Origin = "https://iftype.github.io" 
+    
+    # 허용할 HTTP 메서드 (GET 요청과 사전 점검 OPTIONS 허용)
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS" 
+    
+    # 요청에 포함될 수 있는 헤더 허용
+    Access-Control-Allow-Headers = "Content-Type"
