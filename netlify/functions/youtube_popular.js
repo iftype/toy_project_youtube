@@ -1,15 +1,14 @@
-// netlify/functions/youtube-search.js
+// netlify/functions/youtube_popular.js
 const { default: fetch } = require("node-fetch");
 
 exports.handler = async (event) => {
-  // ✅ 공통 CORS 헤더
   const headers = {
-    "Access-Control-Allow-Origin": "https://iftype.github.io", // 정확한 Origin만 허용
+    "Access-Control-Allow-Origin": "https://iftype.github.io", // ✅ 정확히 지정
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
   };
 
-  // ✅ OPTIONS 요청 처리 (Preflight)
+  // ✅ OPTIONS 요청 (CORS Preflight)
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
@@ -18,38 +17,57 @@ exports.handler = async (event) => {
     };
   }
 
-  // ✅ GET 요청만 허용
+  // ✅ GET만 허용
   if (event.httpMethod !== "GET") {
     return {
       statusCode: 405,
       headers,
-      body: "Method Not Allowed",
+      body: JSON.stringify({ error: "Method Not Allowed" }),
     };
   }
 
   const apiKey = process.env.YOUTUBE_API_KEY;
-  const { query } = event.queryStringParameters;
+  const { query } = event.queryStringParameters || {};
 
   if (!query) {
-    return { statusCode: 400, headers, body: "검색어(query)가 필요합니다." };
+    return {
+      statusCode: 400,
+      headers,
+      body: JSON.stringify({ error: "검색어(query)가 필요합니다." }),
+    };
   }
 
-  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&key=${apiKey}&maxResults=10`;
+  const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${encodeURIComponent(
+    query
+  )}&key=${apiKey}&maxResults=10`;
 
   try {
     const response = await fetch(url);
+
+    // ✅ YouTube API 응답이 실패했을 때 처리
+    if (!response.ok) {
+      const text = await response.text();
+      console.error("YouTube API 에러 응답:", text);
+      return {
+        statusCode: response.status,
+        headers,
+        body: JSON.stringify({ error: "YouTube API 실패", detail: text }),
+      };
+    }
+
     const data = await response.json();
+    const items = data.items || []; // ✅ 항상 배열 반환
 
     return {
       statusCode: 200,
-      headers, // ✅ 성공 응답에도 반드시 포함
-      body: JSON.stringify(data.items),
+      headers,
+      body: JSON.stringify(items),
     };
   } catch (error) {
-    console.error("YouTube API 호출 오류:", error);
+    console.error("YouTube API 호출 중 오류:", error);
     return {
       statusCode: 500,
-      headers, // ✅ 실패 응답에도 포함
+      headers,
       body: JSON.stringify({ error: "서버 오류", detail: error.message }),
     };
   }
